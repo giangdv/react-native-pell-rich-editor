@@ -12,17 +12,21 @@ import { HTML } from "./editor";
 
 const PlatformIOS = Platform.OS === "ios";
 
-export default class RichTextEditor extends Component {
-  // static propTypes = {
-  //     initialContentHTML: PropTypes.string,
-  //     editorInitializedCallback: PropTypes.func,
-  // };
+type Props = {
+  style?: object,
+  backgroundColor: string,
+  color: string,
+  minHeight: number,
+  onHeightChange: () => void
+};
 
+export default class RichTextEditor extends Component<Props> {
   static defaultProps = {
     contentInset: {},
     style: {},
     backgroundColor: "#FFF",
     color: "#000",
+    minHeight: 200,
     onHeightChange: () => {}
   };
 
@@ -167,10 +171,7 @@ export default class RichTextEditor extends Component {
     if (useContainer) {
       return (
         <View
-          style={[
-            this.props.style,
-            { height: height || Dimensions.get("window").height * 0.7 }
-          ]}
+          style={[this.props.style, { height: height || this.props.minHeight }]}
         >
           {this.renderWebView()}
         </View>
