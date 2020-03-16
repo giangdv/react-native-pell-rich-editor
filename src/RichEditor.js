@@ -17,7 +17,7 @@ type Props = {
   backgroundColor: string,
   color: string,
   minHeight: number,
-  onHeightChange: () => void
+  onHeightChange: height => void
 };
 
 export default class RichTextEditor extends Component<Props> {
@@ -124,7 +124,8 @@ export default class RichTextEditor extends Component<Props> {
         }
         case messages.OFFSET_HEIGHT:
           this.setWebHeight(message.data);
-          if (this.props.onHeightChange) this.props.onHeightChange();
+          if (this.props.onHeightChange)
+            this.props.onHeightChange(message.data);
           break;
       }
     } catch (e) {
