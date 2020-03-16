@@ -20,7 +20,10 @@ export default class RichTextEditor extends Component {
 
   static defaultProps = {
     contentInset: {},
-    style: {}
+    style: {},
+    backgroundColor: "#FFF",
+    color: "#000",
+    onHeightChange: () => {}
   };
 
   constructor(props) {
@@ -29,13 +32,16 @@ export default class RichTextEditor extends Component {
     this.registerToolbar = this.registerToolbar.bind(this);
     this._onKeyboardWillShow = this._onKeyboardWillShow.bind(this);
     this._onKeyboardWillHide = this._onKeyboardWillHide.bind(this);
-    this.isInit = false;
     this.state = {
       selectionChangeListeners: [],
       keyboardHeight: 0,
-      height: 0
+      height: 0,
+      isInit: false
     };
     this.focusListeners = [];
+    let { backgroundColor, color } = this.props;
+    this.html = HTML.replace("{editorBackgroundColor}", backgroundColor);
+    this.html = this.html.replace("{editorTextColor}", color);
   }
 
   componentWillMount() {
@@ -114,6 +120,7 @@ export default class RichTextEditor extends Component {
         }
         case messages.OFFSET_HEIGHT:
           this.setWebHeight(message.data);
+          if (this.props.onHeightChange) this.props.onHeightChange();
           break;
       }
     } catch (e) {
@@ -122,7 +129,6 @@ export default class RichTextEditor extends Component {
   };
 
   setWebHeight = height => {
-    console.log(height);
     if (height !== this.state.height) {
       this.setState({ height });
     }
@@ -133,6 +139,7 @@ export default class RichTextEditor extends Component {
       useWebKit={true}
       scrollEnabled={false}
       {...this.props}
+      style={this.state.isInit ? this.props.style : styles.hidden}
       hideKeyboardAccessoryView={true}
       keyboardDisplayRequiresUserAction={false}
       ref={r => {
@@ -144,7 +151,7 @@ export default class RichTextEditor extends Component {
       domStorageEnabled={false}
       bounces={false}
       javaScriptEnabled={true}
-      source={{ html: HTML }}
+      source={{ html: this.html }}
       onLoad={() => this.init()}
     />
   );
@@ -214,7 +221,9 @@ export default class RichTextEditor extends Component {
 
   init() {
     let that = this;
-    that.isInit = true;
+    this.setState({
+      isInit: true
+    });
     that.setContentHTML(this.props.initialContentHTML);
     that.props.editorInitializedCallback &&
       that.props.editorInitializedCallback();
@@ -280,5 +289,9 @@ const styles = StyleSheet.create({
     marginLeft: -20,
     marginRight: -20,
     marginTop: 20
+  },
+  hidden: {
+    width: 0,
+    height: 0
   }
 });
