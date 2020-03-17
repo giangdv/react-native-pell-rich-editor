@@ -17,6 +17,7 @@ type Props = {
   backgroundColor: string,
   color: string,
   minHeight: number,
+  fontSize: number,
   onHeightChange: height => void
 };
 
@@ -26,6 +27,7 @@ export default class RichTextEditor extends Component<Props> {
     style: {},
     backgroundColor: "#FFF",
     color: "#000",
+    fontSize: 14,
     minHeight: 200,
     onHeightChange: () => {}
   };
@@ -43,9 +45,10 @@ export default class RichTextEditor extends Component<Props> {
       isInit: false
     };
     this.focusListeners = [];
-    let { backgroundColor, color } = this.props;
+    let { backgroundColor, color, fontSize } = this.props;
     this.html = HTML.replace("{editorBackgroundColor}", backgroundColor);
     this.html = this.html.replace("{editorTextColor}", color);
+    this.html = this.html.replace("{fontSize}", fontSize);
   }
 
   componentWillMount() {
